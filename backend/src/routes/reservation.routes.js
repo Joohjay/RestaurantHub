@@ -9,9 +9,9 @@ import { authenticateToken, authorizeRoles } from "../middleware/auth.middleware
 
 const router = express.Router();
 
-router.get("/", authenticateToken, authorizeRoles("owner", "admin"), getReservations);
+router.get("/", authenticateToken, getReservations);
 router.get("/:id", authenticateToken, getReservationById);
 router.post("/", authenticateToken, createReservation);
-router.put("/:id", authenticateToken, authorizeRoles("owner", "admin"), updateReservation);
+router.put("/:id", authenticateToken, authorizeRoles("owner"), updateReservation);
 
 export default router;

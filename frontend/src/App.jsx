@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import "./App.css";
 
 import Navbar from "./Components/navbar";
@@ -8,6 +8,8 @@ import Home from "./pages/home";
 import Restaurants from "./pages/Restaurants";
 import Login from "./pages/login";
 import Register from "./pages/register";
+import ForgotPassword from "./pages/forgotpassword";
+import ResetPassword from "./pages/resetpassword";
 import About from "./pages/about";
 import Contact from "./pages/contact";
 import RestaurantDetail from "./pages/restaurantdetail";
@@ -15,10 +17,16 @@ import Dashboard from "./pages/dashboard";
 import Reservation from "./pages/reservation";
 import Checkout from "./pages/checkout";
 import Profile from "./pages/profile";
-import Admin from "./pages/admin";
+import OwnerDashboard from "./pages/admin";
+import AdminDashboard from "./pages/admindashboard";
+import AdminUsers from "./pages/adminusers";
+import AdminRestaurants from "./pages/adminrestaurants";
+import AdminOrders from "./pages/adminorders";
 import ManageMenu from "./pages/managemenu";
 import ManageOrders from "./pages/manageorders";
-import { restaurantData } from "./data/restaurants";
+import ManageRestaurants from "./pages/managerestaurants";
+import ManageReservations from "./pages/managereservations";
+import OrderReceipt from "./pages/orderreceipt";
 
 function App() {
   const [theme, setTheme] = useState(() => {
@@ -29,6 +37,13 @@ function App() {
   });
 
   const [cartItems, setCartItems] = useState([]);
+  const [currentUser, setCurrentUser] = useState(() => {
+    if (typeof window !== "undefined") {
+      return JSON.parse(localStorage.getItem("user") || "null");
+    }
+    return null;
+  });
+  const [authChecking, setAuthChecking] = useState(true);
 
   useEffect(() => {
     document.body.classList.remove("theme-light", "theme-dark");
@@ -36,8 +51,60 @@ function App() {
     localStorage.setItem("theme", theme);
   }, [theme]);
 
+  useEffect(() => {
+    async function verifySession() {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setAuthChecking(false);
+        return;
+      }
+
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/auth/me`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          setCurrentUser(null);
+          return;
+        }
+
+        const user = await response.json();
+        localStorage.setItem("user", JSON.stringify(user));
+        setCurrentUser(user);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setAuthChecking(false);
+      }
+    }
+
+    verifySession();
+  }, []);
+
   const toggleTheme = () => {
     setTheme((current) => (current === "dark" ? "light" : "dark"));
+  };
+
+  const requireAuth = (element) => {
+    return currentUser ? element : <Navigate to="/login" replace />;
+  };
+
+  const requireRole = (element, allowedRoles) => {
+    if (!currentUser) return <Navigate to="/login" replace />;
+    if (allowedRoles.includes(currentUser.role)) return element;
+    return <Navigate to={currentUser.role === "admin" ? "/admin" : "/dashboard"} replace />;
+  };
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setCurrentUser(null);
+    window.location.href = "/";
   };
 
   const addToCart = (restaurant, item) => {
@@ -59,6 +126,7 @@ function App() {
           restaurantName: restaurant.name,
           name: item.name,
           price: item.price,
+          menuItemId: item.id || item.menu_item_id,
           quantity: 1,
         },
       ];
@@ -86,31 +154,44 @@ function App() {
   const clearCart = () => setCartItems([]);
   const cartCount = cartItems.reduce((sum, entry) => sum + entry.quantity, 0);
 
+  if (authChecking) {
+    return <div className="page"><p>Loading session...</p></div>;
+  }
+
   return (
     <>
-      <Navbar theme={theme} toggleTheme={toggleTheme} cartCount={cartCount} />
-      <main>
+      <Navbar theme={theme} toggleTheme={toggleTheme} cartCount={cartCount} currentUser={currentUser} logout={logout} />
+      <main className={currentUser ? "appMain" : ""}>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/restaurants" element={<Restaurants restaurants={restaurantData} />} />
+          <Route path="/restaurants" element={<Restaurants />} />
           <Route
             path="/restaurant/:id"
-            element={<RestaurantDetail restaurants={restaurantData} addToCart={addToCart} />}
+            element={<RestaurantDetail addToCart={addToCart} />}
           />
           <Route path="/checkout" element={<Checkout cartItems={cartItems} removeFromCart={removeFromCart} updateCartQuantity={updateCartQuantity} clearCart={clearCart} />} />
-          <Route path="/reservation" element={<Reservation restaurants={restaurantData} />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+          <Route path="/order-confirmation/:id" element={requireAuth(<OrderReceipt />)} />
+          <Route path="/reservation" element={<Reservation />} />
+          <Route path="/login" element={<Login currentUser={currentUser} setCurrentUser={setCurrentUser} />} />
+          <Route path="/register" element={<Register setCurrentUser={setCurrentUser} />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/menu" element={<ManageMenu />} />
-          <Route path="/orders" element={<ManageOrders />} />
+          <Route path="/dashboard" element={requireAuth(<Dashboard currentUser={currentUser} />)} />
+          <Route path="/profile" element={requireAuth(<Profile currentUser={currentUser} />)} />
+          <Route path="/admin" element={requireRole(<AdminDashboard />, ["admin"])} />
+          <Route path="/admin/users" element={requireRole(<AdminUsers />, ["admin"])} />
+          <Route path="/admin/restaurants" element={requireRole(<AdminRestaurants />, ["admin"])} />
+          <Route path="/admin/orders" element={requireRole(<AdminOrders />, ["admin"])} />
+          <Route path="/owner" element={requireRole(<OwnerDashboard />, ["owner"])} />
+          <Route path="/restaurants/manage" element={requireRole(<ManageRestaurants />, ["owner"])} />
+          <Route path="/menu" element={requireRole(<ManageMenu />, ["owner"])} />
+          <Route path="/orders" element={requireRole(<ManageOrders />, ["owner"])} />
+          <Route path="/reservations/manage" element={requireRole(<ManageReservations />, ["owner"])} />
         </Routes>
       </main>
-      <Footer />
+      {!currentUser && <Footer />}
     </>
   );
 }

@@ -1,30 +1,87 @@
-import "../App.css";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import { LuSearch, LuUtensilsCrossed, LuClock, LuTruck, LuLock, LuStar, LuCoffee } from "react-icons/lu";
+import { API_URL } from "../config";
+import "../App.css";
 
-const categories = [
-  { emoji: "🍕", title: "Pizza" },
-  { emoji: "🍔", title: "Fast Food" },
-  { emoji: "🥗", title: "Healthy Meals" },
-  { emoji: "🍜", title: "Local Cuisine" },
-  { emoji: "☕", title: "Cafes" },
-  { emoji: "🍰", title: "Desserts" },
-];
-
-const popularRestaurants = [
-  { id: "pizza-palace", emoji: "🍕", name: "Pizza Palace", rating: "★★★★★", location: "Mbeya" },
-  { id: "burger-house", emoji: "🍔", name: "Burger House", rating: "★★★★★", location: "Dar es Salaam" },
-  { id: "coffee-corner", emoji: "☕", name: "Coffee Corner", rating: "★★★★☆", location: "Mwanza" },
-];
+const categoryIcons = {
+  "Local Cuisine": <LuUtensilsCrossed size={32} />,
+  Pizza: <LuUtensilsCrossed size={32} />,
+  "Fast Food": <LuUtensilsCrossed size={32} />,
+  Seafood: <LuUtensilsCrossed size={32} />,
+  Café: <LuCoffee size={32} />,
+  "Healthy Meals": <LuUtensilsCrossed size={32} />,
+  Chicken: <LuUtensilsCrossed size={32} />,
+  Desserts: <LuUtensilsCrossed size={32} />,
+};
 
 const features = [
-  { icon: "🔍", title: "Browse Restaurants", description: "Find top-rated restaurants near you." },
-  { icon: "🪑", title: "Table Reservation", description: "Reserve tables with one click." },
-  { icon: "⏱️", title: "Pickup Scheduling", description: "Plan your order pickup time." },
-  { icon: "🚚", title: "Delivery Location", description: "Fast restaurant delivery to your door." },
-  { icon: "🔒", title: "Secure Payments", description: "Pay safely with multiple options." },
+  { icon: <LuSearch size={28} />, title: "Browse Restaurants", description: "Find top-rated restaurants near you." },
+  { icon: <LuUtensilsCrossed size={28} />, title: "Table Reservation", description: "Reserve tables with one click." },
+  { icon: <LuClock size={28} />, title: "Pickup Scheduling", description: "Plan your order pickup time." },
+  { icon: <LuTruck size={28} />, title: "Delivery Location", description: "Fast restaurant delivery to your door." },
+  { icon: <LuLock size={28} />, title: "Secure Payments", description: "Pay safely with multiple options." },
 ];
 
+function formatRating(rating) {
+  return rating ? `${Number(rating).toFixed(1)}` : "Not rated";
+}
+
 function Home() {
+  const [restaurants, setRestaurants] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  async function fetchRestaurants() {
+    try {
+      const response = await fetch(`${API_URL}/api/restaurants`);
+      if (!response.ok) {
+        setError("Failed to load restaurants.");
+        return;
+      }
+
+      const data = await response.json();
+      setRestaurants(data);
+    } catch (err) {
+      setError("Unable to load restaurants. Please try again later.");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    const loadRestaurants = () => {
+      fetchRestaurants();
+    };
+
+    queueMicrotask(loadRestaurants);
+  }, []);
+
+  const popularRestaurants = useMemo(
+    () =>
+      [...restaurants]
+        .sort((left, right) => Number(right.rating || 0) - Number(left.rating || 0))
+        .slice(0, 3),
+    [restaurants]
+  );
+
+  const categories = useMemo(
+    () =>
+      [...new Set(restaurants.map((restaurant) => restaurant.category).filter(Boolean))].map((category) => ({
+        icon: categoryIcons[category] || <LuUtensilsCrossed size={32} />,
+        title: category,
+      })),
+    [restaurants]
+  );
+
+  const locations = useMemo(
+    () => [...new Set(restaurants.map((restaurant) => restaurant.location).filter(Boolean))],
+    [restaurants]
+  );
+
+  const featuredRestaurant = popularRestaurants[0];
+
   return (
     <>
       <section className="hero heroWithMedia">
@@ -36,7 +93,7 @@ function Home() {
           </p>
           <div className="heroCtas">
             <Link to="/restaurants">
-              <button className="primaryBtn">View Menu</button>
+              <button className="primaryBtn">Explore Restaurants</button>
             </Link>
             <Link to="/register">
               <button className="secondaryBtn">Sign Up</button>
@@ -44,26 +101,28 @@ function Home() {
           </div>
           <div className="heroStats">
             <div>
-              <strong>120+</strong>
+              <strong>{restaurants.length || 0}</strong>
               <span>Restaurants</span>
             </div>
             <div>
-              <strong>8K+</strong>
-              <span>Orders</span>
+              <strong>{categories.length || 0}</strong>
+              <span>Categories</span>
             </div>
             <div>
-              <strong>4.9</strong>
-              <span>Rating</span>
+              <strong>{featuredRestaurant ? Number(featuredRestaurant.rating).toFixed(1) : "0.0"}</strong>
+              <span>Top Rating</span>
             </div>
           </div>
         </div>
         <div className="heroMedia">
           <div className="phoneMockup">
             <div className="phoneScreen">
-              <div className="menuTag">Chicken Burger</div>
-              <div className="menuPrice">$15.00</div>
-              <div className="menuDetails">Fresh ingredients and premium toppings.</div>
-              <button className="primaryBtn fullWidth">Add to Cart</button>
+              <div className="menuTag">{featuredRestaurant?.name || "DineHub"}</div>
+              <div className="menuPrice">{featuredRestaurant ? <>{formatRating(featuredRestaurant.rating)}</> : "Fresh meals"}</div>
+              <div className="menuDetails">{featuredRestaurant?.description || "Explore restaurants and order your favorite meals."}</div>
+              <Link to={featuredRestaurant ? `/restaurant/${featuredRestaurant.id}` : "/restaurants"}>
+                <button className="primaryBtn fullWidth">View Menu</button>
+              </Link>
             </div>
           </div>
         </div>
@@ -75,65 +134,72 @@ function Home() {
           <input placeholder="Search restaurant..." />
           <select>
             <option>Location</option>
-            <option>Mbeya</option>
-            <option>Dar</option>
-            <option>Arusha</option>
+            {locations.map((location) => (
+              <option key={location}>{location}</option>
+            ))}
           </select>
           <button>Search</button>
         </div>
       </section>
 
-      <section className="categories">
-        <h2>Browse by Category</h2>
-        <div className="categoryGrid">
-          {categories.map((category) => (
-            <div key={category.title} className="categoryCard">
-              <span>{category.emoji}</span>
-              <h3>{category.title}</h3>
-            </div>
-          ))}
-        </div>
-      </section>
+      {loading && <section className="restaurants"><p>Loading restaurants...</p></section>}
+      {error && <section className="restaurants"><p className="authError">{error}</p></section>}
 
-      <section className="restaurants">
-        <h2>Popular Restaurants</h2>
-        <div className="cards">
-          {popularRestaurants.map((restaurant) => (
-            <div key={restaurant.id} className="card">
-              <span>{restaurant.emoji}</span>
-              <h3>{restaurant.name}</h3>
-              <p>{restaurant.rating}</p>
-              <p>{restaurant.location}</p>
-              <Link to={`/restaurant/${restaurant.id}`}>
-                <button>Order Now</button>
-              </Link>
+      {!loading && !error && (
+        <>
+          <section className="categories">
+            <h2>Browse by Category</h2>
+            <div className="categoryGrid">
+              {categories.map((category) => (
+                <div key={category.title} className="categoryCard">
+                  <span className="categoryIcon">{category.icon}</span>
+                  <h3>{category.title}</h3>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      </section>
+          </section>
 
-      <section className="featured">
-        <h2>Featured Restaurant</h2>
-        <div className="featuredBox">
-          <div className="featuredImage">🍽️</div>
-          <div className="featuredInfo">
-            <h3>Ocean View Restaurant</h3>
-            <p>
-              Experience fresh seafood, local dishes, and international cuisine in a relaxing atmosphere with fast delivery and table reservations.
-            </p>
-            <Link to="/restaurants">
-              <button className="heroBtn">View Menu</button>
-            </Link>
-          </div>
-        </div>
-      </section>
+          <section className="restaurants">
+            <h2>Popular Restaurants</h2>
+            <div className="cards">
+              {popularRestaurants.map((restaurant) => (
+                <div key={restaurant.id} className="card">
+                  <span className="cardIcon"><LuUtensilsCrossed size={32} /></span>
+                  <h3>{restaurant.name}</h3>
+                  <p><LuStar size={14} style={{ verticalAlign: "middle" }} /> {formatRating(restaurant.rating)}</p>
+                  <p>{restaurant.location}</p>
+                  <Link to={`/restaurant/${restaurant.id}`}>
+                    <button>Order Now</button>
+                  </Link>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {featuredRestaurant && (
+            <section className="featured">
+              <h2>Featured Restaurant</h2>
+              <div className="featuredBox">
+                <div className="featuredImage"><LuUtensilsCrossed size={48} /></div>
+                <div className="featuredInfo">
+                  <h3>{featuredRestaurant.name}</h3>
+                  <p>{featuredRestaurant.description}</p>
+                  <Link to={`/restaurant/${featuredRestaurant.id}`}>
+                    <button className="heroBtn">View Menu</button>
+                  </Link>
+                </div>
+              </div>
+            </section>
+          )}
+        </>
+      )}
 
       <section className="why">
         <h2>Why Choose RestaurantHub?</h2>
         <div className="features">
           {features.map((feature) => (
             <div key={feature.title} className="featureCard">
-              <span>{feature.icon}</span>
+              <span className="featureIcon">{feature.icon}</span>
               <h3>{feature.title}</h3>
               <p>{feature.description}</p>
             </div>
@@ -143,16 +209,16 @@ function Home() {
 
       <section className="stats">
         <div>
-          <h1>120+</h1>
+          <h1>{restaurants.length || 0}</h1>
           <p>Restaurants</p>
         </div>
         <div>
-          <h1>8K+</h1>
-          <p>Orders</p>
+          <h1>{categories.length || 0}</h1>
+          <p>Categories</p>
         </div>
         <div>
-          <h1>4.9</h1>
-          <p>Rating</p>
+          <h1>{featuredRestaurant ? Number(featuredRestaurant.rating).toFixed(1) : "0.0"}</h1>
+          <p>Top Rating</p>
         </div>
       </section>
 
@@ -160,18 +226,18 @@ function Home() {
         <h2>Customer Reviews</h2>
         <div className="reviewContainer">
           <div className="reviewCard">
-            <p>★★★★★</p>
-            <p>Ordering food from different restaurants has never been easier.</p>
+            <p className="reviewStars"><LuStar size={16} /><LuStar size={16} /><LuStar size={16} /><LuStar size={16} /><LuStar size={16} /></p>
+            <p>Ordering local meals was quick and easy.</p>
             <h4>- Sarah</h4>
           </div>
           <div className="reviewCard">
-            <p>★★★★★</p>
+            <p className="reviewStars"><LuStar size={16} /><LuStar size={16} /><LuStar size={16} /><LuStar size={16} /><LuStar size={16} /></p>
             <p>The reservation feature saves me a lot of time.</p>
             <h4>- Michael</h4>
           </div>
           <div className="reviewCard">
-            <p>★★★★★</p>
-            <p>The platform is simple, fast and easy to use.</p>
+            <p className="reviewStars"><LuStar size={16} /><LuStar size={16} /><LuStar size={16} /><LuStar size={16} /><LuStar size={16} /></p>
+            <p>The restaurant selection feels fresh and simple to browse.</p>
             <h4>- James</h4>
           </div>
         </div>
