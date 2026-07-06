@@ -1,6 +1,7 @@
 ﻿import { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { LuX, LuCalendarClock } from "react-icons/lu";
+import { LuX } from "react-icons/lu";
+import PickupScheduler from "../Components/PickupScheduler";
 import { API_URL } from "../config";
 import "../App.css";
 
@@ -282,49 +283,13 @@ function Checkout({ cartItems, removeFromCart, updateCartQuantity, clearCart }) 
                   />
                 </label>
               )}
-              <div className="schedulingCard">
-                <div className="schedulingCardHeader">
-                  <LuCalendarClock size={22} />
-                  <h3>
-                    {orderType === "delivery"
-                      ? "Schedule Delivery"
-                      : orderType === "dine-in"
-                      ? "Schedule Dine-in"
-                      : "Schedule Pickup"}
-                  </h3>
-                </div>
-                <p className="schedulingCardHint">
-                  Choose when you would like your {orderType === "delivery" ? "order delivered" : orderType === "dine-in" ? "table ready" : "order ready for pickup"}.
-                </p>
-                <div className="schedulingInputs">
-                  <label>
-                    {orderType === "delivery"
-                      ? "Delivery date"
-                      : orderType === "dine-in"
-                      ? "Dine-in date"
-                      : "Pickup date"}
-                    <input
-                      type="date"
-                      value={pickupDate}
-                      onChange={(e) => setPickupDate(e.target.value)}
-                      required
-                    />
-                  </label>
-                  <label>
-                    {orderType === "delivery"
-                      ? "Delivery time"
-                      : orderType === "dine-in"
-                      ? "Dine-in time"
-                      : "Pickup time"}
-                    <input
-                      type="time"
-                      value={pickupTime}
-                      onChange={(e) => setPickupTime(e.target.value)}
-                      required
-                    />
-                  </label>
-                </div>
-              </div>
+              <PickupScheduler
+                orderType={orderType}
+                date={pickupDate}
+                time={pickupTime}
+                onDateChange={setPickupDate}
+                onTimeChange={setPickupTime}
+              />
               <label>
                 Location notes
                 <input
