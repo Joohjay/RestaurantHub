@@ -6,6 +6,7 @@ import orderRoutes from "./routes/order.routes.js";
 import reservationRoutes from "./routes/reservation.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
 import menuRoutes from "./routes/menu.routes.js";
+import contactRoutes from "./routes/contact.routes.js";
 import { env } from "./config/env.js";
 import { securityHeaders } from "./middleware/security.middleware.js";
 import pool from "./db.js";
@@ -28,6 +29,7 @@ app.use("/api", menuRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/reservations", reservationRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/contact", contactRoutes);
 
 app.listen(env.port, () => {
   console.log(`DineHub backend listening on port ${env.port}`);

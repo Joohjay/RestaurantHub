@@ -221,6 +221,86 @@ footer {
   border-top: 1px solid var(--accent);
 }
 
+.professionalFooter {
+  padding: 60px 80px 30px;
+  text-align: left;
+  border-top: 1px solid var(--border);
+}
+
+.professionalFooter .footerContent {
+  display: grid;
+  grid-template-columns: 2fr repeat(3, 1fr);
+  gap: 40px;
+  margin-bottom: 40px;
+}
+
+.professionalFooter h2 {
+  font-size: 1.4rem;
+  margin-bottom: 14px;
+  color: var(--text);
+}
+
+.professionalFooter h3 {
+  font-size: 1rem;
+  margin-bottom: 18px;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.professionalFooter p {
+  color: var(--muted);
+  margin: 8px 0;
+  line-height: 1.7;
+}
+
+.professionalFooter .mutedText {
+  margin-top: 14px;
+}
+
+.footerLinks {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.footerLinks a {
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footerLinks a:hover {
+  color: var(--accent);
+}
+
+.footerBottom {
+  text-align: center;
+  padding-top: 30px;
+  border-top: 1px solid var(--border);
+}
+
+.footerBottom p {
+  font-size: 0.9rem;
+}
+
+@media (max-width: 900px) {
+  .professionalFooter .footerContent {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 540px) {
+  .professionalFooter {
+    padding: 40px 20px 20px;
+  }
+
+  .professionalFooter .footerContent {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+}
+
 @media (max-width: 1000px) {
   nav {
     padding: 0 30px;
@@ -1197,8 +1277,153 @@ word-break: break-word;
 .aboutCard li,
 .contactCard li {
 
-margin-bottom:12px;
+  margin-bottom:12px;
 
+}
+
+.contactFormCard {
+  max-width: 720px;
+  margin: 40px auto 0;
+  padding: 32px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+}
+
+.contactFormCard h2 {
+  margin-bottom: 24px;
+  font-size: 1.6rem;
+}
+
+.notFoundPage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: calc(100vh - 80px);
+}
+
+.notFoundContent h1 {
+  font-size: clamp(6rem, 15vw, 10rem);
+  color: var(--accent);
+  line-height: 1;
+  margin-bottom: 10px;
+}
+
+.notFoundContent h2 {
+  font-size: clamp(1.8rem, 4vw, 2.4rem);
+  margin-bottom: 16px;
+}
+
+.notFoundContent p {
+  max-width: 480px;
+  margin: 0 auto 32px;
+  color: var(--muted);
+}
+
+.notFoundActions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.orderTracker {
+  margin: 24px 0;
+  padding: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+}
+
+.orderTrackerSteps {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+  position: relative;
+}
+
+.orderTrackerSteps::before {
+  content: "";
+  position: absolute;
+  top: 14px;
+  left: 24px;
+  right: 24px;
+  height: 3px;
+  background: var(--border);
+  z-index: 0;
+}
+
+.orderTrackerStep {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  z-index: 1;
+  flex: 1;
+  text-align: center;
+}
+
+.orderTrackerDot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-strong);
+  border: 2px solid var(--border);
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.orderTrackerStep.completed .orderTrackerDot {
+  background: var(--btn-primary);
+  border-color: var(--btn-primary);
+  color: var(--surface-strong);
+}
+
+.orderTrackerStep.current .orderTrackerDot {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+  box-shadow: 0 0 0 4px rgba(255, 77, 79, 0.12);
+}
+
+.orderTrackerLabel {
+  font-size: 0.82rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.orderTrackerStep.completed .orderTrackerLabel,
+.orderTrackerStep.current .orderTrackerLabel {
+  color: var(--text);
+}
+
+.orderTrackerCancelled {
+  text-align: center;
+  color: #ef4444;
+  font-weight: 600;
+  padding: 10px;
+}
+
+@media (max-width: 540px) {
+  .orderTrackerSteps {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .orderTrackerSteps::before {
+    display: none;
+  }
+
+  .orderTrackerStep {
+    flex-direction: row;
+    gap: 12px;
+  }
 }
 
 .restaurantGrid{
@@ -2398,6 +2623,102 @@ color:var(--accent);
 
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+.toastContainer {
+  position: fixed;
+  top: 90px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 360px;
+  width: calc(100% - 40px);
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.22);
+  animation: toastSlideIn 0.25s ease;
+}
+
+@keyframes toastSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.toast-success {
+  border-color: rgba(34, 197, 94, 0.4);
+}
+
+.toast-success .toastIcon {
+  color: #22c55e;
+}
+
+.toast-error {
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+.toast-error .toastIcon {
+  color: #ef4444;
+}
+
+.toast-warning {
+  border-color: rgba(245, 158, 11, 0.4);
+}
+
+.toast-warning .toastIcon {
+  color: #f59e0b;
+}
+
+.toast-info .toastIcon {
+  color: var(--accent);
+}
+
+.toastMessage {
+  flex: 1;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
+.toastClose {
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+
+.toastClose:hover {
+  color: var(--text);
+  background: var(--surface-strong);
+}
+
+@media (max-width: 760px) {
+  .toastContainer {
+    top: 80px;
+    right: 14px;
+    left: 14px;
+    width: auto;
+    max-width: none;
+  }
 }
 
 .authButton:disabled {

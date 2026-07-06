@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import "./App.css";
 
+import { ToastProvider } from "./context/ToastContext";
 import Navbar from "./Components/navbar";
 import Footer from "./Components/footer";
+import ErrorBoundary from "./Components/ErrorBoundary";
 import Home from "./pages/home";
 import Restaurants from "./pages/Restaurants";
 import Login from "./pages/login";
@@ -30,6 +32,7 @@ import ManageOrders from "./pages/manageorders";
 import ManageRestaurants from "./pages/managerestaurants";
 import ManageReservations from "./pages/managereservations";
 import OrderReceipt from "./pages/orderreceipt";
+import NotFound from "./pages/notfound";
 
 function App() {
   const [theme, setTheme] = useState(() => {
@@ -162,9 +165,10 @@ function App() {
   }
 
   return (
-    <>
+    <ToastProvider>
       <Navbar theme={theme} toggleTheme={toggleTheme} cartCount={cartCount} currentUser={currentUser} logout={logout} />
       <main className={currentUser ? "appMain" : ""}>
+        <ErrorBoundary>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/restaurants" element={<Restaurants />} />
@@ -195,11 +199,14 @@ function App() {
           <Route path="/menu" element={requireRole(<ManageMenu />, ["owner"])} />
           <Route path="/orders" element={requireRole(<ManageOrders />, ["owner"])} />
           <Route path="/reservations/manage" element={requireRole(<ManageReservations />, ["owner"])} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
+        </ErrorBoundary>
       </main>
       {!currentUser && <Footer />}
-    </>
+    </ToastProvider>
   );
 }
+
 
 export default App;

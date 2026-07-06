@@ -1,16 +1,18 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { LuCalendarClock } from "react-icons/lu";
+import OrderTracker from "../Components/OrderTracker";
+import { useToast } from "../context/ToastContext";
 import { API_URL } from "../config";
 import { formatCurrency, formatScheduled } from "../utils/format";
 import "../App.css";
 
 function OrderReceipt() {
   const { id } = useParams();
+  const { success, error: showError } = useToast();
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [paymentLoading, setPaymentLoading] = useState(false);
-  const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -49,7 +51,6 @@ function OrderReceipt() {
     try {
       setPaymentLoading(true);
       setError("");
-      setMessage("");
       const token = localStorage.getItem("token");
       const response = await fetch(`${API_URL}/api/orders/${id}/payment`, {
         method: "POST",
@@ -62,14 +63,14 @@ function OrderReceipt() {
 
       const data = await response.json();
       if (!response.ok) {
-        setError(data.message || "Failed to process payment.");
+        showError(data.message || "Failed to process payment.");
         return;
       }
 
       setOrder(data.order);
-      setMessage(data.message || "Payment processed successfully.");
+      success(data.message || "Payment processed successfully.");
     } catch (err) {
-      setError("Unable to process payment. Please try again later.");
+      showError("Unable to process payment. Please try again later.");
       console.error(err);
     } finally {
       setPaymentLoading(false);
@@ -88,11 +89,10 @@ function OrderReceipt() {
         </div>
       </div>
       {error && <p className="authError">{error}</p>}
-      {message && <p className="successMessage">{message}</p>}
       {order && (
         <div className="receiptCard">
           <h2>Order #{order.id}</h2>
-          <p>Status: {order.status}</p>
+          <OrderTracker status={order.status} />
           <p>Payment: {order.payment_method?.replace("_", " ")} • {order.payment_status}</p>
           <p className="receiptSchedule">
             <LuCalendarClock size={16} style={{ verticalAlign: "middle" }} />{" "}
