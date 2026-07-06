@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { LuSearch, LuUtensilsCrossed, LuClock, LuTruck, LuLock, LuStar, LuCoffee } from "react-icons/lu";
 import { API_URL } from "../config";
 import "../App.css";
@@ -28,9 +28,12 @@ function formatRating(rating) {
 }
 
 function Home() {
+  const navigate = useNavigate();
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [homeSearch, setHomeSearch] = useState("");
+  const [homeLocation, setHomeLocation] = useState("");
 
   async function fetchRestaurants() {
     try {
@@ -131,14 +134,30 @@ function Home() {
       <section className="search" id="search">
         <h2>Find Restaurants</h2>
         <div className="searchBox">
-          <input placeholder="Search restaurant..." />
-          <select>
-            <option>Location</option>
+          <input
+            placeholder="Search restaurant..."
+            value={homeSearch}
+            onChange={(event) => setHomeSearch(event.target.value)}
+          />
+          <select
+            value={homeLocation}
+            onChange={(event) => setHomeLocation(event.target.value)}
+          >
+            <option value="">Location</option>
             {locations.map((location) => (
-              <option key={location}>{location}</option>
+              <option key={location} value={location}>{location}</option>
             ))}
           </select>
-          <button>Search</button>
+          <button
+            onClick={() => {
+              const params = new URLSearchParams();
+              if (homeSearch.trim()) params.set("search", homeSearch.trim());
+              if (homeLocation) params.set("location", homeLocation);
+              navigate(`/restaurants?${params.toString()}`);
+            }}
+          >
+            Search
+          </button>
         </div>
       </section>
 
@@ -151,10 +170,14 @@ function Home() {
             <h2>Browse by Category</h2>
             <div className="categoryGrid">
               {categories.map((category) => (
-                <div key={category.title} className="categoryCard">
+                <Link
+                  key={category.title}
+                  to={`/restaurants?category=${encodeURIComponent(category.title)}`}
+                  className="categoryCard"
+                >
                   <span className="categoryIcon">{category.icon}</span>
                   <h3>{category.title}</h3>
-                </div>
+                </Link>
               ))}
             </div>
           </section>

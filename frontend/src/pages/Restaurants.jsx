@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { LuUtensilsCrossed, LuStar } from "react-icons/lu";
 import { API_URL } from "../config";
 import { formatRating } from "../utils/format";
 import "../App.css";
 
 function Restaurants() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [restaurants, setRestaurants] = useState([]);
-  const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("");
-  const [location, setLocation] = useState("");
+  const [search, setSearch] = useState(searchParams.get("search") || "");
+  const [category, setCategory] = useState(searchParams.get("category") || "");
+  const [location, setLocation] = useState(searchParams.get("location") || "");
   const [sort, setSort] = useState("rating");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -39,6 +40,14 @@ function Restaurants() {
 
     queueMicrotask(loadRestaurants);
   }, []);
+
+  useEffect(() => {
+    const params = {};
+    if (search.trim()) params.search = search.trim();
+    if (category) params.category = category;
+    if (location) params.location = location;
+    setSearchParams(params, { replace: true });
+  }, [search, category, location]);
 
   const categories = [...new Set(restaurants.map((restaurant) => restaurant.category).filter(Boolean))];
   const locations = [...new Set(restaurants.map((restaurant) => restaurant.location).filter(Boolean))];
