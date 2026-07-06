@@ -94,7 +94,7 @@ function Login({ currentUser, setCurrentUser }) {
       <div className="authCard">
         <div className="authHeader">
           <h1>Welcome Back</h1>
-          <p>Log in with your email or phone number to continue.</p>
+          <p>Log in with your email and password to continue.</p>
         </div>
         <form className="authForm" onSubmit={handleSubmit} noValidate>
           <label>
