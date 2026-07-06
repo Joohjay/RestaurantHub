@@ -6,6 +6,11 @@ import "../App.css";
 
 const roleOptions = ["customer", "owner", "admin"];
 
+function formatDate(value) {
+  if (!value) return "N/A";
+  return new Date(value).toLocaleDateString();
+}
+
 function AdminUsers() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -81,8 +86,10 @@ function AdminUsers() {
   }, [users, search]);
 
   const columns = [
+    { key: "id", label: "ID", render: (user) => `#${user.id}` },
     { key: "name", label: "Name", render: (user) => user.name },
     { key: "email", label: "Email", render: (user) => user.email },
+    { key: "phone", label: "Phone", render: (user) => user.phone || "—" },
     { key: "role", label: "Role", render: (user) => <StatusBadge value={user.role} /> },
     {
       key: "changeRole",
@@ -99,6 +106,7 @@ function AdminUsers() {
         </select>
       ),
     },
+    { key: "joined", label: "Joined", render: (user) => formatDate(user.created_at) },
   ];
 
   if (loading) return <LoadingState message="Loading users..." />;

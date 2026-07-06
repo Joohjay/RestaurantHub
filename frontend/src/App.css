@@ -2282,6 +2282,36 @@ color:var(--accent);
   border-radius: 10px;
 }
 
+@media (max-width: 1100px) {
+  .adminOverviewGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 760px) {
+  .adminOverviewGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .adminDashboard .dashboardGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .adminNavSub {
+    font-size: 13px;
+  }
+
+  .adminNavPreview .dashboardListRow {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .adminNavPreview .dashboardListRow > span,
+  .adminNavPreview .dashboardListRow > div > .statusBadge {
+    justify-self: start;
+  }
+}
+
 .adminNavCard {
   display: block;
   text-decoration: none;

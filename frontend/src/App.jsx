@@ -20,7 +20,10 @@ import Profile from "./pages/profile";
 import OwnerDashboard from "./pages/admin";
 import AdminDashboard from "./pages/admindashboard";
 import AdminUsers from "./pages/adminusers";
+import AdminOwners from "./pages/adminowners";
+import AdminCustomers from "./pages/admincustomers";
 import AdminRestaurants from "./pages/adminrestaurants";
+import AdminMenus from "./pages/adminmenus";
 import AdminOrders from "./pages/adminorders";
 import ManageMenu from "./pages/managemenu";
 import ManageOrders from "./pages/manageorders";
@@ -182,7 +185,10 @@ function App() {
           <Route path="/profile" element={requireAuth(<Profile currentUser={currentUser} />)} />
           <Route path="/admin" element={requireRole(<AdminDashboard />, ["admin"])} />
           <Route path="/admin/users" element={requireRole(<AdminUsers />, ["admin"])} />
+          <Route path="/admin/owners" element={requireRole(<AdminOwners />, ["admin"])} />
+          <Route path="/admin/customers" element={requireRole(<AdminCustomers />, ["admin"])} />
           <Route path="/admin/restaurants" element={requireRole(<AdminRestaurants />, ["admin"])} />
+          <Route path="/admin/menus" element={requireRole(<AdminMenus />, ["admin"])} />
           <Route path="/admin/orders" element={requireRole(<AdminOrders />, ["admin"])} />
           <Route path="/owner" element={requireRole(<OwnerDashboard />, ["owner"])} />
           <Route path="/restaurants/manage" element={requireRole(<ManageRestaurants />, ["owner"])} />

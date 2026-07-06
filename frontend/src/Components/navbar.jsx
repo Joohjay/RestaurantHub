@@ -43,6 +43,12 @@ function getPageTitle(pathname, role) {
     "/checkout": "Checkout",
     "/profile": "Profile",
     "/admin": "Admin Dashboard",
+    "/admin/users": "Manage Users",
+    "/admin/owners": "Manage Owners",
+    "/admin/customers": "Manage Customers",
+    "/admin/restaurants": "Manage Restaurants",
+    "/admin/menus": "Manage Menus",
+    "/admin/orders": "Manage Orders",
     "/owner": "Owner Dashboard",
     "/restaurants/manage": "Manage Restaurants",
     "/menu": "Manage Menu",
@@ -100,7 +106,10 @@ function Navbar({ theme, toggleTheme, cartCount, currentUser, logout }) {
 
     const adminLinks = [
       { to: "/admin/users", label: "Users", icon: icons.users },
+      { to: "/admin/owners", label: "Owners", icon: icons.users },
+      { to: "/admin/customers", label: "Customers", icon: icons.user },
       { to: "/admin/restaurants", label: "Restaurants", icon: icons.restaurants },
+      { to: "/admin/menus", label: "Menus", icon: icons.menu },
       { to: "/admin/orders", label: "Orders", icon: icons.orders },
     ];
 

@@ -3,6 +3,11 @@ import { AdminPageHeader, DataTable, LoadingState, ErrorState, SearchBar } from 
 import { API_URL } from "../config";
 import "../App.css";
 
+function formatDate(value) {
+  if (!value) return "N/A";
+  return new Date(value).toLocaleDateString();
+}
+
 function AdminRestaurants() {
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -54,7 +59,9 @@ function AdminRestaurants() {
     { key: "category", label: "Category", render: (restaurant) => restaurant.category || "Uncategorized" },
     { key: "location", label: "Location", render: (restaurant) => restaurant.location },
     { key: "owner", label: "Owner", render: (restaurant) => restaurant.owner_name || "No owner" },
+    { key: "menuCount", label: "Menu Items", render: (restaurant) => restaurant.menu_count || 0 },
     { key: "rating", label: "Rating", render: (restaurant) => restaurant.rating ? Number(restaurant.rating).toFixed(1) : "N/A" },
+    { key: "added", label: "Added", render: (restaurant) => formatDate(restaurant.created_at) },
   ];
 
   if (loading) return <LoadingState message="Loading restaurants..." />;

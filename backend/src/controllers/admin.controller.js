@@ -62,7 +62,11 @@ export async function getAdminSummary(req, res) {
 
 export async function getUsers(req, res) {
   try {
-    const result = await pool.query("SELECT id, name, email, role FROM users ORDER BY id DESC");
+    const result = await pool.query(
+      `SELECT id, name, email, phone, role, created_at
+       FROM users
+       ORDER BY id DESC`
+    );
     res.json(result.rows);
   } catch (error) {
     console.error(error);
@@ -70,18 +74,74 @@ export async function getUsers(req, res) {
   }
 }
 
+export async function getOwners(req, res) {
+  try {
+    const result = await pool.query(
+      `SELECT u.id, u.name, u.email, u.phone, u.created_at,
+              COUNT(r.id)::int AS restaurant_count
+       FROM users u
+       LEFT JOIN restaurants r ON r.owner_id = u.id
+       WHERE u.role = 'owner'
+       GROUP BY u.id
+       ORDER BY u.name`
+    );
+    res.json(result.rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to load owners." });
+  }
+}
+
+export async function getCustomers(req, res) {
+  try {
+    const result = await pool.query(
+      `SELECT u.id, u.name, u.email, u.phone, u.created_at,
+              COUNT(o.id)::int AS order_count
+       FROM users u
+       LEFT JOIN orders o ON o.user_id = u.id
+       WHERE u.role = 'customer'
+       GROUP BY u.id
+       ORDER BY u.name`
+    );
+    res.json(result.rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to load customers." });
+  }
+}
+
 export async function getRestaurants(req, res) {
   try {
     const result = await pool.query(
-      `SELECT r.id, r.name, r.location, r.category, r.rating, u.name AS owner_name
+      `SELECT r.id, r.name, r.location, r.category, r.rating, r.created_at,
+              u.name AS owner_name,
+              COUNT(mi.id)::int AS menu_count
        FROM restaurants r
        LEFT JOIN users u ON r.owner_id = u.id
+       LEFT JOIN menu_items mi ON mi.restaurant_id = r.id
+       GROUP BY r.id, u.name
        ORDER BY r.name`
     );
     res.json(result.rows);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Failed to load restaurants." });
+  }
+}
+
+export async function getMenuItems(req, res) {
+  try {
+    const result = await pool.query(
+      `SELECT mi.id, mi.restaurant_id, mi.name, mi.description, mi.price,
+              mi.image, mi.available, r.name AS restaurant_name
+       FROM menu_items mi
+       JOIN restaurants r ON mi.restaurant_id = r.id
+       ORDER BY r.name, mi.name`
+    );
+    res.json(result.rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to load menu items." });
   }
 }
 
