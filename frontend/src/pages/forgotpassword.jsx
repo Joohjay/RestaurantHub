@@ -3,11 +3,11 @@ import { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { LuLoader } from "react-icons/lu";
 import { API_URL } from "../config";
-import { isValidEmail, isValidPhone } from "../utils/validation";
+import { isValidEmail } from "../utils/validation";
 
 function ForgotPassword() {
   const navigate = useNavigate();
-  const [identifier, setIdentifier] = useState("");
+  const [email, setEmail] = useState("");
   const [touched, setTouched] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -15,14 +15,14 @@ function ForgotPassword() {
 
   const validation = useMemo(() => {
     if (!touched) return "";
-    if (!identifier.trim()) return "Email or phone number is required.";
-    if (!isValidEmail(identifier) && !isValidPhone(identifier)) {
-      return "Enter a valid email or phone number.";
+    if (!email.trim()) return "Email is required.";
+    if (!isValidEmail(email.trim())) {
+      return "Enter a valid email address.";
     }
     return "";
-  }, [identifier, touched]);
+  }, [email, touched]);
 
-  const isValid = identifier.trim() && (isValidEmail(identifier) || isValidPhone(identifier));
+  const isValid = email.trim() && isValidEmail(email.trim());
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -37,7 +37,7 @@ function ForgotPassword() {
       const response = await fetch(`${API_URL}/api/auth/forgot-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ identifier: identifier.trim() }),
+        body: JSON.stringify({ email: email.trim() }),
       });
 
       const data = await response.json();
@@ -47,7 +47,7 @@ function ForgotPassword() {
       }
 
       if (!data.token) {
-        setError("No account found with that email or phone number.");
+        setError("No account found with that email address.");
         return;
       }
 
@@ -68,19 +68,19 @@ function ForgotPassword() {
       <div className="authCard">
         <div className="authHeader">
           <h1>Forgot Password</h1>
-          <p>Enter your email or phone number to reset your password.</p>
+          <p>Enter your email to reset your password.</p>
         </div>
         <form className="authForm" onSubmit={handleSubmit} noValidate>
           <label>
-            Email or phone number
+            Email
             <input
-              type="text"
-              value={identifier}
+              type="email"
+              value={email}
               onChange={(event) => {
-                setIdentifier(event.target.value);
+                setEmail(event.target.value);
                 setError("");
               }}
-              placeholder="you@example.com or 0712345678"
+              placeholder="you@example.com"
               required
             />
             {validation && <span className="fieldError">{validation}</span>}

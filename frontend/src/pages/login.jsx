@@ -3,38 +3,30 @@ import { useMemo, useState } from "react";
 import { useNavigate, Navigate, Link } from "react-router-dom";
 import { LuEye, LuEyeOff, LuLoader } from "react-icons/lu";
 import { API_URL } from "../config";
-import { isValidEmail, isValidPhone } from "../utils/validation";
+import { isValidEmail } from "../utils/validation";
 
 function Login({ currentUser, setCurrentUser }) {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({ identifier: "", password: "" });
+  const [formData, setFormData] = useState({ email: "", password: "" });
   const [touched, setTouched] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  const identifierType = useMemo(() => {
-    const value = formData.identifier.trim();
-    if (!value) return null;
-    if (isValidEmail(value)) return "email";
-    if (isValidPhone(value)) return "phone";
-    return "invalid";
-  }, [formData.identifier]);
-
   const validation = useMemo(() => {
     const errors = {};
-    if (touched.identifier) {
-      if (!formData.identifier.trim()) errors.identifier = "Email or phone number is required.";
-      else if (identifierType === "invalid") errors.identifier = "Enter a valid email or phone number.";
+    if (touched.email) {
+      if (!formData.email.trim()) errors.email = "Email is required.";
+      else if (!isValidEmail(formData.email.trim())) errors.email = "Enter a valid email address.";
     }
     if (touched.password && !formData.password) errors.password = "Password is required.";
     return errors;
-  }, [formData, touched, identifierType]);
+  }, [formData, touched]);
 
   const isFormValid =
-    formData.identifier.trim() &&
-    identifierType !== "invalid" &&
+    formData.email.trim() &&
+    isValidEmail(formData.email.trim()) &&
     formData.password;
 
   if (currentUser) {
@@ -50,7 +42,7 @@ function Login({ currentUser, setCurrentUser }) {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setTouched({ identifier: true, password: true });
+    setTouched({ email: true, password: true });
 
     if (!isFormValid) return;
 
@@ -63,7 +55,7 @@ function Login({ currentUser, setCurrentUser }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          identifier: formData.identifier.trim(),
+          email: formData.email.trim(),
           password: formData.password,
         }),
       });
@@ -106,16 +98,16 @@ function Login({ currentUser, setCurrentUser }) {
         </div>
         <form className="authForm" onSubmit={handleSubmit} noValidate>
           <label>
-            Email or phone number
+            Email
             <input
-              type="text"
-              name="identifier"
-              value={formData.identifier}
+              type="email"
+              name="email"
+              value={formData.email}
               onChange={handleChange}
-              placeholder="you@example.com or 0712345678"
+              placeholder="you@example.com"
               required
             />
-            {renderFieldError("identifier")}
+            {renderFieldError("email")}
           </label>
 
           <label>

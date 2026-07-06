@@ -71,27 +71,21 @@ export async function register(req, res) {
 }
 
 export async function login(req, res) {
-  const { identifier, password } = req.body;
+  const { email, password } = req.body;
 
-  if (!identifier || !password) {
-    return res.status(400).json({ message: "Email or phone number and password are required." });
+  if (!email || !password) {
+    return res.status(400).json({ message: "Email and password are required." });
   }
 
-  const trimmedIdentifier = String(identifier).trim();
-  const isEmail = isValidEmail(trimmedIdentifier);
-  const isPhone = isValidPhone(trimmedIdentifier);
-
-  if (!isEmail && !isPhone) {
-    return res.status(400).json({ message: "Enter a valid email or phone number." });
+  const trimmedEmail = String(email).trim();
+  if (!isValidEmail(trimmedEmail)) {
+    return res.status(400).json({ message: "A valid email address is required." });
   }
-
-  const lookupValue = isPhone ? normalizePhone(trimmedIdentifier) : trimmedIdentifier;
-  const lookupColumn = isEmail ? "email" : "phone";
 
   try {
     const result = await pool.query(
-      `SELECT id, name, email, phone, password, role FROM users WHERE ${lookupColumn} = $1`,
-      [lookupValue]
+      "SELECT id, name, email, phone, password, role FROM users WHERE email = $1",
+      [trimmedEmail]
     );
     const user = result.rows[0];
     if (!user) {
@@ -203,27 +197,21 @@ export async function changePassword(req, res) {
 }
 
 export async function forgotPassword(req, res) {
-  const { identifier } = req.body;
+  const { email } = req.body;
 
-  if (!identifier) {
-    return res.status(400).json({ message: "Email or phone number is required." });
+  if (!email) {
+    return res.status(400).json({ message: "Email is required." });
   }
 
-  const trimmedIdentifier = String(identifier).trim();
-  const isEmail = isValidEmail(trimmedIdentifier);
-  const isPhone = isValidPhone(trimmedIdentifier);
-
-  if (!isEmail && !isPhone) {
-    return res.status(400).json({ message: "Enter a valid email or phone number." });
+  const trimmedEmail = String(email).trim();
+  if (!isValidEmail(trimmedEmail)) {
+    return res.status(400).json({ message: "A valid email address is required." });
   }
-
-  const lookupValue = isPhone ? normalizePhone(trimmedIdentifier) : trimmedIdentifier;
-  const lookupColumn = isEmail ? "email" : "phone";
 
   try {
     const result = await pool.query(
-      `SELECT id, name, email, phone, role FROM users WHERE ${lookupColumn} = $1`,
-      [lookupValue]
+      "SELECT id, name, email, phone, role FROM users WHERE email = $1",
+      [trimmedEmail]
     );
 
     if (!result.rows.length) {
