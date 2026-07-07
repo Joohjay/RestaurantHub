@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { LuArrowLeft, LuUtensilsCrossed, LuStar } from "react-icons/lu";
 import ImageWithFallback from "../Components/ImageWithFallback";
+import LoadingSpinner from "../Components/LoadingSpinner";
 import { API_URL } from "../config";
 import { formatRating } from "../utils/format";
 import { resolveMenuImage } from "../utils/menuImages";
@@ -65,7 +66,7 @@ function RestaurantDetail({ addToCart }) {
   if (loading) {
     return (
       <div className="page">
-        <p>Loading restaurant...</p>
+        <LoadingSpinner text="Loading restaurant..." />
       </div>
     );
   }

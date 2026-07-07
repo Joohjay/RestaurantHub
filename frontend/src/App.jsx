@@ -3,8 +3,10 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import "./App.css";
 
 import { ToastProvider } from "./context/ToastProvider";
+import { useToast } from "./hooks/useToast.js";
 import Navbar from "./Components/navbar";
 import Footer from "./Components/footer";
+import LoadingSpinner from "./Components/LoadingSpinner";
 import ErrorBoundary from "./Components/ErrorBoundary";
 import Home from "./pages/home";
 import Restaurants from "./pages/Restaurants";
@@ -42,7 +44,16 @@ function App() {
     return "dark";
   });
 
-  const [cartItems, setCartItems] = useState([]);
+  const [cartItems, setCartItems] = useState(() => {
+    if (typeof window !== "undefined") {
+      try {
+        return JSON.parse(localStorage.getItem("cart") || "[]");
+      } catch {
+        return [];
+      }
+    }
+    return [];
+  });
   const [currentUser, setCurrentUser] = useState(() => {
     if (typeof window !== "undefined") {
       return JSON.parse(localStorage.getItem("user") || "null");
@@ -50,12 +61,19 @@ function App() {
     return null;
   });
   const [authChecking, setAuthChecking] = useState(true);
+  const toast = useToast();
 
   useEffect(() => {
     document.body.classList.remove("theme-light", "theme-dark");
     document.body.classList.add(`theme-${theme}`);
     localStorage.setItem("theme", theme);
   }, [theme]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("cart", JSON.stringify(cartItems));
+    }
+  }, [cartItems]);
 
   useEffect(() => {
     async function verifySession() {
@@ -115,18 +133,27 @@ function App() {
 
   const addToCart = (restaurant, item) => {
     setCartItems((currentItems) => {
-      const existingIndex = currentItems.findIndex(
+      const hasOtherRestaurant = currentItems.some(
+        (entry) => entry.restaurantId !== restaurant.id
+      );
+      let nextItems = currentItems;
+      if (hasOtherRestaurant) {
+        toast.info(`Cart cleared. You can only order from one restaurant at a time. Added items from ${restaurant.name}.`);
+        nextItems = [];
+      }
+
+      const existingIndex = nextItems.findIndex(
         (entry) => entry.restaurantId === restaurant.id && entry.name === item.name
       );
       if (existingIndex !== -1) {
-        return currentItems.map((entry, index) =>
+        return nextItems.map((entry, index) =>
           index === existingIndex
             ? { ...entry, quantity: entry.quantity + 1 }
             : entry
         );
       }
       return [
-        ...currentItems,
+        ...nextItems,
         {
           restaurantId: restaurant.id,
           restaurantName: restaurant.name,
@@ -161,7 +188,7 @@ function App() {
   const cartCount = cartItems.reduce((sum, entry) => sum + entry.quantity, 0);
 
   if (authChecking) {
-    return <div className="page"><p>Loading session...</p></div>;
+    return <div className="page"><LoadingSpinner text="Loading session..." /></div>;
   }
 
   return (
@@ -176,9 +203,9 @@ function App() {
             path="/restaurant/:id"
             element={<RestaurantDetail addToCart={addToCart} />}
           />
-          <Route path="/checkout" element={<Checkout cartItems={cartItems} removeFromCart={removeFromCart} updateCartQuantity={updateCartQuantity} clearCart={clearCart} />} />
+          <Route path="/checkout" element={requireAuth(<Checkout cartItems={cartItems} removeFromCart={removeFromCart} updateCartQuantity={updateCartQuantity} clearCart={clearCart} />)} />
           <Route path="/order-confirmation/:id" element={requireAuth(<OrderReceipt />)} />
-          <Route path="/reservation" element={<Reservation />} />
+          <Route path="/reservation" element={requireAuth(<Reservation />)} />
           <Route path="/login" element={<Login currentUser={currentUser} setCurrentUser={setCurrentUser} />} />
           <Route path="/register" element={<Register setCurrentUser={setCurrentUser} />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -203,7 +230,9 @@ function App() {
         </Routes>
         </ErrorBoundary>
       </main>
-      {!currentUser && <Footer />}
+      <div className={currentUser ? "footerLoggedIn" : ""}>
+        <Footer />
+      </div>
     </ToastProvider>
   );
 }
