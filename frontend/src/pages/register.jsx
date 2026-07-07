@@ -229,6 +229,7 @@ function Register({ setCurrentUser }) {
             <select name="role" value={formData.role} onChange={handleChange}>
               <option value="customer">Customer</option>
               <option value="owner">Restaurant Owner</option>
+              <option value="admin">Admin</option>
             </select>
           </label>
 

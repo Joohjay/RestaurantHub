@@ -10,7 +10,7 @@ import {
   normalizePhone,
 } from "../utils/validation.js";
 
-const allowedRegistrationRoles = ["customer", "owner"];
+const allowedRegistrationRoles = ["customer", "owner", "admin"];
 
 export async function register(req, res) {
   const { name, email, phone, password, confirmPassword, role = "customer" } = req.body;
@@ -42,7 +42,7 @@ export async function register(req, res) {
   }
 
   if (!allowedRegistrationRoles.includes(role)) {
-    return res.status(400).json({ message: "Role must be customer or owner." });
+    return res.status(400).json({ message: "Role must be customer, owner, or admin." });
   }
 
   try {

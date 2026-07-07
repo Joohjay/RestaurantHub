@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { LuSearch, LuUtensilsCrossed, LuClock, LuTruck, LuLock, LuStar, LuCoffee } from "react-icons/lu";
 import ImageWithFallback from "../Components/ImageWithFallback";
-import LoadingSpinner from "../Components/LoadingSpinner";
 import { API_URL } from "../config";
 import "../App.css";
 
@@ -175,7 +174,7 @@ function Home() {
               <span>Categories</span>
             </div>
             <div>
-              <strong>{topRatedRestaurant?.rating ? Number(topRatedRestaurant.rating).toFixed(1) : "0.0"}</strong>
+              <strong>{topRatedRestaurant ? Number(topRatedRestaurant.rating).toFixed(1) : "0.0"}</strong>
               <span>Top Rating</span>
             </div>
           </div>
@@ -230,7 +229,7 @@ function Home() {
         </div>
       </section>
 
-      {loading && <section className="restaurants"><LoadingSpinner text="Loading restaurants..." /></section>}
+      {loading && <section className="restaurants"><p>Loading restaurants...</p></section>}
       {error && <section className="restaurants"><p className="authError">{error}</p></section>}
 
       {!loading && !error && (
@@ -343,7 +342,7 @@ function Home() {
           <p>Categories</p>
         </div>
         <div>
-          <h1>{topRatedRestaurant?.rating ? Number(topRatedRestaurant.rating).toFixed(1) : "0.0"}</h1>
+          <h1>{topRatedRestaurant ? Number(topRatedRestaurant.rating).toFixed(1) : "0.0"}</h1>
           <p>Top Rating</p>
         </div>
       </section>

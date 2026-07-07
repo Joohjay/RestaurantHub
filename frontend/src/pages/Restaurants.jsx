@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { LuUtensilsCrossed, LuStar } from "react-icons/lu";
 import ImageWithFallback from "../Components/ImageWithFallback";
-import LoadingSpinner from "../Components/LoadingSpinner";
 import { API_URL } from "../config";
 import { formatRating } from "../utils/format";
 import "../App.css";
@@ -101,7 +100,7 @@ function Restaurants() {
         </select>
       </section>
 
-      {loading && <LoadingSpinner text="Loading restaurants..." />}
+      {loading && <p>Loading restaurants...</p>}
       {error && <p className="authError">{error}</p>}
 
       {!loading && !error && filteredRestaurants.length === 0 && (

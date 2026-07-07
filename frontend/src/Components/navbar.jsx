@@ -232,13 +232,6 @@ function Navbar({ theme, toggleTheme, cartCount, currentUser, logout }) {
     );
   }
 
-  const publicLinks = [
-    { to: "/", label: "Home" },
-    { to: "/restaurants", label: "Restaurants" },
-    { to: "/about", label: "About Us" },
-    { to: "/contact", label: "Contact" },
-  ];
-
   return (
     <nav className="navbar">
       <div className="navBrand">
@@ -250,19 +243,29 @@ function Navbar({ theme, toggleTheme, cartCount, currentUser, logout }) {
         {menuOpen ? "Close" : "Menu"}
       </button>
       <ul className={`navLinks ${menuOpen ? "open" : ""}`}>
-        {publicLinks.map((item) => {
-          const isActive = location.pathname === item.to || (item.to !== "/" && location.pathname.startsWith(item.to));
-          return (
-            <li key={item.to}>
-              <Link to={item.to} className={isActive ? "active" : ""} onClick={closeMenu}>{item.label}</Link>
-            </li>
-          );
-        })}
+        <li>
+          <Link to="/" onClick={closeMenu}>Home</Link>
+        </li>
+        <li>
+          <Link to="/restaurants" onClick={closeMenu}>Restaurants</Link>
+        </li>
+        <li>
+          <Link to="/dashboard" onClick={closeMenu}>Dashboard</Link>
+        </li>
+        <li>
+          <Link to="/about" onClick={closeMenu}>About Us</Link>
+        </li>
+        <li>
+          <Link to="/contact" onClick={closeMenu}>Contact</Link>
+        </li>
       </ul>
       <div className="navActions">
         <button className="iconButton textIconButton" onClick={toggleTheme} title="Toggle theme" aria-label="Toggle theme">
           {theme === "dark" ? <LuSun size={20} /> : <LuMoon size={20} />}
         </button>
+        <a href="/#search" className="iconButton textIconButton" title="Search">
+          Search
+        </a>
         <Link to="/checkout" className="cartButton" onClick={closeMenu}>
           Cart
           <span>{cartCount}</span>
