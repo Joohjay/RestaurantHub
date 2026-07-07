@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "nodemon src/index.js",
     "start": "node src/index.js",
-    "seed": "node seed.js"
+    "seed": "node seed.js",
+    "populate-menu-images": "node scripts/populate-menu-images.js"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
