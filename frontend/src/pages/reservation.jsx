@@ -1,8 +1,11 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { API_URL } from "../config";
 import "../App.css";
 
 function Reservation() {
+  const [searchParams] = useSearchParams();
+  const preselectedId = searchParams.get("restaurant");
   const [restaurants, setRestaurants] = useState([]);
   const [restaurantId, setRestaurantId] = useState("");
   const [date, setDate] = useState("");
@@ -16,7 +19,7 @@ function Reservation() {
 
   const selectedRestaurant = restaurants.find((restaurant) => String(restaurant.id) === String(restaurantId));
 
-  async function fetchRestaurants() {
+  const fetchRestaurants = useCallback(async () => {
     try {
       const response = await fetch(`${API_URL}/api/restaurants`);
       if (!response.ok) {
@@ -26,14 +29,18 @@ function Reservation() {
 
       const data = await response.json();
       setRestaurants(data);
-      setRestaurantId(data[0]?.id || "");
+      const initialId =
+        preselectedId && data.some((restaurant) => String(restaurant.id) === String(preselectedId))
+          ? preselectedId
+          : data[0]?.id || "";
+      setRestaurantId(initialId);
     } catch (err) {
       setError("Unable to load restaurants. Please try again later.");
       console.error(err);
     } finally {
       setLoading(false);
     }
-  }
+  }, [preselectedId]);
 
   useEffect(() => {
     const loadRestaurants = () => {
@@ -41,7 +48,7 @@ function Reservation() {
     };
 
     queueMicrotask(loadRestaurants);
-  }, []);
+  }, [fetchRestaurants]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();

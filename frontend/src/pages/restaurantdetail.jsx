@@ -146,7 +146,7 @@ function RestaurantDetail({ addToCart }) {
         <div className="restaurantInfoCard">
           <h3>Reserve a Table</h3>
           <p>Need a table? Reserve a spot now and add special requests.</p>
-          <Link to="/reservation">
+          <Link to={`/reservation?restaurant=${restaurant.id}`}>
             <button className="secondaryBtn">Book a Table</button>
           </Link>
         </div>

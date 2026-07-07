@@ -110,8 +110,8 @@ function Restaurants() {
       {!loading && !error && filteredRestaurants.length > 0 && (
         <section className="restaurantGrid">
           {filteredRestaurants.map((restaurant) => (
-            <Link key={restaurant.id} to={`/restaurant/${restaurant.id}`} className="restaurantCardLink">
-              <div className="restaurantCard">
+            <div key={restaurant.id} className="restaurantCard">
+              <Link to={`/restaurant/${restaurant.id}`} className="restaurantCardLink">
                 <div className="restaurantImage">
                   <ImageWithFallback
                     src={restaurantImageUrl(restaurant.image)}
@@ -123,9 +123,16 @@ function Restaurants() {
                 <p className="restaurantMeta">{restaurant.category} • {restaurant.location}</p>
                 <p className="restaurantRating"><LuStar size={14} style={{ verticalAlign: "middle" }} /> {formatRating(restaurant.rating)}</p>
                 <p className="restaurantDescription">{restaurant.description}</p>
-                <button className="heroBtn">View Restaurant</button>
+              </Link>
+              <div className="cardActions">
+                <Link to={`/restaurant/${restaurant.id}`}>
+                  <button className="heroBtn">View Restaurant</button>
+                </Link>
+                <Link to={`/reservation?restaurant=${restaurant.id}`}>
+                  <button className="secondaryBtn">Reserve Table</button>
+                </Link>
               </div>
-            </Link>
+            </div>
           ))}
         </section>
       )}
