@@ -33,6 +33,36 @@ function imageUrl(image) {
   return `/images/${encodeURIComponent(image)}`;
 }
 
+const restaurantBackgrounds = {
+  "Coffee Corner": "coffee (2).jpg",
+  "Green Bowl": "quinoa bowl inspo.jpg",
+  "Kilimanjaro Pizza": "chicken pizza.jpg",
+  "Nyumbani Grill": "grilled meat.jpg",
+  "Safari Chicken House": "fried chicken pieces.jpg",
+  "Spice Coast Seafood": "garlic butter fish.jpg",
+  "Sweet Treats Bakery": "baked cakes.jpg",
+  "Urban Burger": "burger and fries.jpg",
+};
+
+const categoryBackgrounds = {
+  "Local Cuisine": "grilled meat.jpg",
+  "Pizza": "chicken pizza.jpg",
+  "Fast Food": "burger and fries.jpg",
+  "Seafood": "garlic butter fish.jpg",
+  "Café": "coffee (2).jpg",
+  "Healthy Meals": "quinoa bowl inspo.jpg",
+  "Chicken": "fried chicken pieces.jpg",
+  "Desserts": "baked cakes.jpg",
+};
+
+function getRestaurantBackground(name) {
+  return restaurantBackgrounds[name] || "hero-bg.jpg";
+}
+
+function getCategoryBackground(name) {
+  return categoryBackgrounds[name] || "hero-bg.jpg";
+}
+
 function Home() {
   const navigate = useNavigate();
   const [restaurants, setRestaurants] = useState([]);
@@ -89,7 +119,26 @@ function Home() {
     [restaurants]
   );
 
-  const featuredRestaurant = popularRestaurants[0];
+  const topRatedRestaurant = popularRestaurants[0];
+  const [featuredIndex, setFeaturedIndex] = useState(0);
+  const featuredRestaurant =
+    restaurants.length > 0
+      ? restaurants[featuredIndex % restaurants.length]
+      : topRatedRestaurant;
+  const featuredBackground = featuredRestaurant
+    ? getRestaurantBackground(featuredRestaurant.name)
+    : "hero-bg.jpg";
+  const phoneBackground = featuredRestaurant
+    ? getRestaurantBackground(featuredRestaurant.name)
+    : "restaurant-ocean-catch.jpg";
+
+  useEffect(() => {
+    if (restaurants.length === 0) return;
+    const interval = setInterval(() => {
+      setFeaturedIndex((prev) => (prev + 1) % restaurants.length);
+    }, 30000);
+    return () => clearInterval(interval);
+  }, [restaurants]);
 
   return (
     <>
@@ -125,14 +174,20 @@ function Home() {
               <span>Categories</span>
             </div>
             <div>
-              <strong>{featuredRestaurant ? Number(featuredRestaurant.rating).toFixed(1) : "0.0"}</strong>
+              <strong>{topRatedRestaurant ? Number(topRatedRestaurant.rating).toFixed(1) : "0.0"}</strong>
               <span>Top Rating</span>
             </div>
           </div>
         </div>
         <div className="heroMedia">
           <div className="phoneMockup">
-            <div className="phoneScreen">
+            <div
+              key={featuredIndex}
+              className="phoneScreen phoneContentAnimate"
+              style={{
+                backgroundImage: `linear-gradient(rgba(15, 23, 42, 0.82), rgba(15, 23, 42, 0.88)), url('/images/${encodeURIComponent(phoneBackground)}')`,
+              }}
+            >
               <div className="menuTag">{featuredRestaurant?.name || "DineHub"}</div>
               <div className="menuPrice">{featuredRestaurant ? <>{formatRating(featuredRestaurant.rating)}</> : "Fresh meals"}</div>
               <div className="menuDetails">{featuredRestaurant?.description || "Explore restaurants and order your favorite meals."}</div>
@@ -187,6 +242,9 @@ function Home() {
                   key={category.title}
                   to={`/restaurants?category=${encodeURIComponent(category.title)}`}
                   className="categoryCard"
+                  style={{
+                    backgroundImage: `linear-gradient(rgba(15, 23, 42, 0.72), rgba(15, 23, 42, 0.86)), url('/images/${encodeURIComponent(getCategoryBackground(category.title))}')`,
+                  }}
                 >
                   <span className="categoryIcon">{category.icon}</span>
                   <h3>{category.title}</h3>
@@ -222,12 +280,18 @@ function Home() {
           {featuredRestaurant && (
             <section className="featured">
               <h2>Featured Restaurant</h2>
-              <div className="featuredBox">
+              <div
+                key={featuredIndex}
+                className="featuredBox featuredAnimate"
+                style={{
+                  backgroundImage: `linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.92)), url('/images/${encodeURIComponent(featuredBackground)}')`,
+                }}
+              >
                 <div className="featuredImage">
                   <ImageWithFallback
                     src={imageUrl(featuredRestaurant.image)}
                     alt={featuredRestaurant.name}
-                    className="featuredRestaurantImg"
+                    className="featuredRestaurantImg featuredImageAnimate"
                     placeholder={<LuUtensilsCrossed size={48} />}
                   />
                 </div>
@@ -238,6 +302,17 @@ function Home() {
                     <button className="heroBtn">View Menu</button>
                   </Link>
                 </div>
+              </div>
+              <div className="featuredDots">
+                {restaurants.map((restaurant, index) => (
+                  <button
+                    key={restaurant.id}
+                    className={`featuredDot ${index === featuredIndex % restaurants.length ? "active" : ""}`}
+                    onClick={() => setFeaturedIndex(index)}
+                    aria-label={`Show ${restaurant.name}`}
+                    type="button"
+                  />
+                ))}
               </div>
             </section>
           )}
@@ -267,7 +342,7 @@ function Home() {
           <p>Categories</p>
         </div>
         <div>
-          <h1>{featuredRestaurant ? Number(featuredRestaurant.rating).toFixed(1) : "0.0"}</h1>
+          <h1>{topRatedRestaurant ? Number(topRatedRestaurant.rating).toFixed(1) : "0.0"}</h1>
           <p>Top Rating</p>
         </div>
       </section>
