@@ -1295,11 +1295,17 @@ word-break: break-word;
   font-size: 1.6rem;
 }
 
-.restaurantsPage {
-  background-image: linear-gradient(rgba(15, 23, 42, 0.92), rgba(15, 23, 42, 0.96)), url('/images/restaurants-bg.jpg');
+.page,
+.dashboardPage,
+.authPage {
+  background-image: linear-gradient(rgba(15, 23, 42, 0.94), rgba(15, 23, 42, 0.98)), url('/images/page-bg.jpg');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
+}
+
+.restaurantsPage {
+  background-image: linear-gradient(rgba(15, 23, 42, 0.92), rgba(15, 23, 42, 0.96)), url('/images/page-bg.jpg');
 }
 
 .restaurantsHero {
