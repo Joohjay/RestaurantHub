@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { AdminPageHeader, DataTable, LoadingState, ErrorState, SearchBar } from "../Components/admin";
+import { AdminPageHeader, DataTable, LoadingState, SearchBar } from "../Components/admin";
 import { API_URL } from "../config";
 import "../App.css";
 

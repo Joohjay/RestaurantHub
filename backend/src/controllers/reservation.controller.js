@@ -48,7 +48,7 @@ export async function getReservationById(req, res) {
       if (!ownerResult.rows.length) {
         return res.status(403).json({ message: "Forbidden." });
       }
-    } else if (reservation.user_id !== req.user.userId) {
+    } else if (String(reservation.user_id) !== String(req.user.userId)) {
       return res.status(403).json({ message: "Forbidden." });
     }
     res.json(reservation);

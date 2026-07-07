@@ -4,6 +4,7 @@ import { LuArrowLeft, LuUtensilsCrossed, LuStar } from "react-icons/lu";
 import ImageWithFallback from "../Components/ImageWithFallback";
 import { API_URL } from "../config";
 import { formatRating } from "../utils/format";
+import { resolveMenuImage } from "../utils/menuImages";
 import "../App.css";
 
 function formatPrice(price) {
@@ -171,7 +172,7 @@ function RestaurantDetail({ addToCart }) {
               <div key={item.id} className="menuItem">
                 <div className="menuItemInfo">
                   <ImageWithFallback
-                    src={imageUrl(item.image)}
+                    src={imageUrl(resolveMenuImage(item.name, item.image))}
                     alt={item.name}
                     className="menuItemImg"
                     placeholder={<div className="menuItemImgPlaceholder"><LuUtensilsCrossed size={24} /></div>}

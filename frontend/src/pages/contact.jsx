@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { LuMail, LuPhone, LuMapPin, LuSend, LuLoader } from "react-icons/lu";
-import { useToast } from "../context/ToastContext";
+import { useToast } from "../hooks/useToast";
 import { API_URL } from "../config";
 import "../App.css";
 
@@ -44,7 +44,7 @@ function Contact() {
   return (
     <div className="page contactPage">
       <div className="pageHero">
-        <h1>Contact RestaurantHub</h1>
+        <h1>Contact DineHub</h1>
         <p>
           We’re here to help with orders, reservations, menu questions, or general feedback. Send us a message and our support team will reply within one business day.
         </p>
@@ -54,15 +54,15 @@ function Contact() {
         <section className="contactCard">
           <h2>Customer Support</h2>
           <p>Have a question about your order or reservation? Our team is ready to assist.</p>
-          <p><LuMail size={16} style={{ verticalAlign: "middle" }} /> support@restauranthub.com</p>
+          <p><LuMail size={16} style={{ verticalAlign: "middle" }} /> support@dinehub.com</p>
           <p><LuPhone size={16} style={{ verticalAlign: "middle" }} /> +255 700 000 000</p>
           <p><strong>Hours:</strong> Mon - Fri, 8am - 8pm</p>
         </section>
 
         <section className="contactCard">
           <h2>Partner Restaurants</h2>
-          <p>Interested in joining the RestaurantHub network? We support flexible onboarding, menu management, and delivery integration.</p>
-          <p><LuMail size={16} style={{ verticalAlign: "middle" }} /> partners@restauranthub.com</p>
+          <p>Interested in joining the DineHub network? We support flexible onboarding, menu management, and delivery integration.</p>
+          <p><LuMail size={16} style={{ verticalAlign: "middle" }} /> partners@dinehub.com</p>
           <p><LuPhone size={16} style={{ verticalAlign: "middle" }} /> +255 700 111 222</p>
         </section>
 

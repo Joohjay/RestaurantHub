@@ -245,7 +245,7 @@ function Home() {
       )}
 
       <section className="why">
-        <h2>Why Choose RestaurantHub?</h2>
+        <h2>Why Choose DineHub?</h2>
         <div className="features">
           {features.map((feature) => (
             <div key={feature.title} className="featureCard">

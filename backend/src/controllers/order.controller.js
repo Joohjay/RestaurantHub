@@ -49,7 +49,7 @@ export async function getOrderById(req, res) {
       if (!ownerResult.rows.length) {
         return res.status(403).json({ message: "Forbidden." });
       }
-    } else if (order.user_id !== req.user.userId) {
+    } else if (String(order.user_id) !== String(req.user.userId)) {
       return res.status(403).json({ message: "Forbidden." });
     }
     const itemsResult = await pool.query(
@@ -258,7 +258,7 @@ export async function processPayment(req, res) {
     const order = orderResult.rows[0];
 
     // Check authorization
-    if (order.user_id !== req.user.userId) {
+    if (String(order.user_id) !== String(req.user.userId)) {
       return res.status(403).json({ message: "Forbidden." });
     }
 

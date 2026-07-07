@@ -156,7 +156,7 @@ function Login({ currentUser, setCurrentUser }) {
         </form>
         <div className="authFooter">
           <p>
-            New to RestaurantHub? <a href="/register">Create an account</a>
+            New to DineHub? <a href="/register">Create an account</a>
           </p>
         </div>
       </div>

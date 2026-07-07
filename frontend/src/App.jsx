@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import "./App.css";
 
-import { ToastProvider } from "./context/ToastContext";
+import { ToastProvider } from "./context/ToastProvider";
 import Navbar from "./Components/navbar";
 import Footer from "./Components/footer";
 import ErrorBoundary from "./Components/ErrorBoundary";

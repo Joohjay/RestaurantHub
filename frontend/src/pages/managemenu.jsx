@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { API_URL } from "../config";
+import { resolveMenuImage } from "../utils/menuImages";
 import "../App.css";
 
 const emptyMenuForm = {
@@ -240,6 +241,15 @@ function ManageMenu() {
           <div className="menuGrid">
             {menuItems.map((item) => (
               <div key={item.id} className="menuItem">
+                {resolveMenuImage(item.name, item.image) && (
+                  <img
+                    src={`/images/${encodeURIComponent(resolveMenuImage(item.name, item.image))}`}
+                    alt={item.name}
+                    className="menuItemImg"
+                    loading="lazy"
+                    style={{ maxWidth: "100%", borderRadius: "8px", marginBottom: "8px" }}
+                  />
+                )}
                 <div>
                   <h3>{item.name}</h3>
                   <p>{item.description}</p>

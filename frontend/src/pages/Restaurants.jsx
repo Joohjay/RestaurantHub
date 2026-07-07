@@ -53,7 +53,7 @@ function Restaurants() {
     if (category) params.category = category;
     if (location) params.location = location;
     setSearchParams(params, { replace: true });
-  }, [search, category, location]);
+  }, [search, category, location, setSearchParams]);
 
   const categories = [...new Set(restaurants.map((restaurant) => restaurant.category).filter(Boolean))];
   const locations = [...new Set(restaurants.map((restaurant) => restaurant.location).filter(Boolean))];

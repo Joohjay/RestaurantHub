@@ -1,5 +1,5 @@
 import "../App.css";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { LuEye, LuEyeOff, LuLoader } from "react-icons/lu";
 import { API_URL } from "../config";
@@ -16,14 +16,8 @@ function ResetPassword() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [touched, setTouched] = useState({ password: false, confirmPassword: false });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(token ? "" : "Invalid or missing reset token.");
   const [success, setSuccess] = useState("");
-
-  useEffect(() => {
-    if (!token) {
-      setError("Invalid or missing reset token.");
-    }
-  }, [token]);
 
   const validation = useMemo(() => {
     const errors = {};

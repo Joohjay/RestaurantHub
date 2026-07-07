@@ -2,9 +2,9 @@ function About() {
   return (
     <div className="page aboutPage">
       <div className="pageHero">
-        <h1>About RestaurantHub</h1>
+        <h1>About DineHub</h1>
         <p>
-          RestaurantHub makes it easy to discover your favorite restaurants, place orders, reserve tables, and schedule pickups from one simple platform.
+          DineHub makes it easy to discover your favorite restaurants, place orders, reserve tables, and schedule pickups from one simple platform.
         </p>
       </div>
 
@@ -27,9 +27,9 @@ function About() {
         </section>
 
         <section className="aboutCard">
-          <h2>Why Choose RestaurantHub</h2>
+          <h2>Why Choose DineHub</h2>
           <p>
-            RestaurantHub combines beautiful design with powerful restaurant tools. Whether you're dining in, picking up, or ordering delivery, we make every interaction smooth and reliable.
+            DineHub combines beautiful design with powerful restaurant tools. Whether you're dining in, picking up, or ordering delivery, we make every interaction smooth and reliable.
           </p>
         </section>
       </div>

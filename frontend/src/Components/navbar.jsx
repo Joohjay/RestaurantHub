@@ -125,7 +125,7 @@ function Navbar({ theme, toggleTheme, cartCount, currentUser, logout }) {
         <aside className={`appSidebar ${menuOpen ? "open" : ""}`}>
           <div className="sidebarBrand">
             <Link to={isAdmin ? "/admin" : "/dashboard"} onClick={closeMenu}>
-              Restaurant<span>Hub</span>
+              Dine<span>Hub</span>
             </Link>
           </div>
 
@@ -236,7 +236,7 @@ function Navbar({ theme, toggleTheme, cartCount, currentUser, logout }) {
     <nav className="navbar">
       <div className="navBrand">
         <Link to="/" className="brand" onClick={closeMenu}>
-          Restaurant<span className="brandAccent">Hub</span>
+          Dine<span className="brandAccent">Hub</span>
         </Link>
       </div>
       <button className="mobileMenuButton" onClick={() => setMenuOpen((open) => !open)} aria-label="Toggle navigation menu">

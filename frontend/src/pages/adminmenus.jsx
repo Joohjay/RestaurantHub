@@ -1,14 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
-import { AdminPageHeader, DataTable, LoadingState, ErrorState, SearchBar } from "../Components/admin";
+import { AdminPageHeader, DataTable, LoadingState, SearchBar } from "../Components/admin";
 import StatusBadge from "../Components/StatusBadge";
 import { API_URL } from "../config";
 import { formatCurrency } from "../utils/format";
 import "../App.css";
-
-function formatDate(value) {
-  if (!value) return "N/A";
-  return new Date(value).toLocaleDateString();
-}
 
 function AdminMenus() {
   const [menus, setMenus] = useState([]);

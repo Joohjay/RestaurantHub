@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import {
-  LuUsers, LuStore, LuClipboardList, LuCalendarDays, LuTrendingUp, LuWallet, LuNotebookText, LuUserCheck, LuUser
+  LuUsers, LuStore, LuClipboardList, LuCalendarDays, LuTrendingUp, LuWallet, LuNotebookText, LuUserCheck
 } from "react-icons/lu";
 import StatusBadge from "../Components/StatusBadge";
 import { AdminNavCard, StatCard, LoadingState, ErrorState } from "../Components/admin";
@@ -8,14 +8,8 @@ import { API_URL } from "../config";
 import { formatCurrency } from "../utils/format";
 import "../App.css";
 
-function formatDate(value) {
-  if (!value) return "N/A";
-  return new Date(value).toLocaleDateString();
-}
-
 function AdminDashboard() {
   const [summary, setSummary] = useState(null);
-  const [users, setUsers] = useState([]);
   const [owners, setOwners] = useState([]);
   const [customers, setCustomers] = useState([]);
   const [restaurants, setRestaurants] = useState([]);
@@ -28,14 +22,12 @@ function AdminDashboard() {
       const token = localStorage.getItem("token");
       const [
         summaryResponse,
-        usersResponse,
         ownersResponse,
         customersResponse,
         restaurantsResponse,
         menusResponse,
       ] = await Promise.all([
         fetch(`${API_URL}/api/admin/summary`, { headers: { Authorization: `Bearer ${token}` } }),
-        fetch(`${API_URL}/api/admin/users`, { headers: { Authorization: `Bearer ${token}` } }),
         fetch(`${API_URL}/api/admin/owners`, { headers: { Authorization: `Bearer ${token}` } }),
         fetch(`${API_URL}/api/admin/customers`, { headers: { Authorization: `Bearer ${token}` } }),
         fetch(`${API_URL}/api/admin/restaurants`, { headers: { Authorization: `Bearer ${token}` } }),
@@ -44,7 +36,6 @@ function AdminDashboard() {
 
       if (
         !summaryResponse.ok ||
-        !usersResponse.ok ||
         !ownersResponse.ok ||
         !customersResponse.ok ||
         !restaurantsResponse.ok ||
@@ -55,7 +46,6 @@ function AdminDashboard() {
       }
 
       setSummary(await summaryResponse.json());
-      setUsers(await usersResponse.json());
       setOwners(await ownersResponse.json());
       setCustomers(await customersResponse.json());
       setRestaurants(await restaurantsResponse.json());

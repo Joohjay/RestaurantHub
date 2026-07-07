@@ -9,7 +9,7 @@ function Footer() {
     <footer className="professionalFooter">
       <div className="footerContent">
         <div className="footerBrand">
-          <h2><LuUtensilsCrossed size={24} style={{ verticalAlign: "middle", marginRight: 8 }} /> RestaurantHub</h2>
+          <h2><LuUtensilsCrossed size={24} style={{ verticalAlign: "middle", marginRight: 8 }} /> DineHub</h2>
           <p>Browse · Order · Reserve · Pickup · Deliver</p>
           <p className="mutedText">Fresh food delivered fast. Discover top restaurants, reserve tables, and schedule pickups all in one place.</p>
         </div>
@@ -37,14 +37,14 @@ function Footer() {
 
         <div className="footerContact">
           <h3>Contact</h3>
-          <p><LuMail size={16} style={{ verticalAlign: "middle" }} /> support@restauranthub.com</p>
+          <p><LuMail size={16} style={{ verticalAlign: "middle" }} /> support@dinehub.com</p>
           <p><LuPhone size={16} style={{ verticalAlign: "middle" }} /> +255 700 000 000</p>
           <p><LuMapPin size={16} style={{ verticalAlign: "middle" }} /> Dar es Salaam, Tanzania</p>
         </div>
       </div>
 
       <div className="footerBottom">
-        <p>© {currentYear} RestaurantHub. All rights reserved.</p>
+        <p>© {currentYear} DineHub. All rights reserved.</p>
       </div>
     </footer>
   );

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { LuCalendarClock } from "react-icons/lu";
 import StatusBadge from "../Components/StatusBadge";
-import { AdminPageHeader, DataTable, LoadingState, ErrorState, SearchBar } from "../Components/admin";
+import { AdminPageHeader, DataTable, LoadingState, SearchBar } from "../Components/admin";
 import { API_URL } from "../config";
 import { formatCurrency, formatPaymentMethod, formatScheduled } from "../utils/format";
 import "../App.css";
