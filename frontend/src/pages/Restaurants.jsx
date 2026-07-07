@@ -70,8 +70,8 @@ function Restaurants() {
     });
 
   return (
-    <div className="page">
-      <section className="pageHero">
+    <div className="page restaurantsPage">
+      <section className="pageHero restaurantsHero">
         <h1>Restaurants</h1>
         <p>Discover restaurants from different locations and enjoy your favorite meals.</p>
       </section>
