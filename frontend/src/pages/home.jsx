@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { LuSearch, LuUtensilsCrossed, LuClock, LuTruck, LuLock, LuStar, LuCoffee } from "react-icons/lu";
+import ImageWithFallback from "../Components/ImageWithFallback";
 import { API_URL } from "../config";
 import "../App.css";
 
@@ -25,6 +26,11 @@ const features = [
 
 function formatRating(rating) {
   return rating ? `${Number(rating).toFixed(1)}` : "Not rated";
+}
+
+function imageUrl(image) {
+  if (!image) return null;
+  return `/images/${encodeURIComponent(image)}`;
 }
 
 function Home() {
@@ -87,7 +93,14 @@ function Home() {
 
   return (
     <>
-      <section className="hero heroWithMedia">
+      <section
+        className="hero heroWithMedia"
+        style={{
+          backgroundImage: "linear-gradient(rgba(15, 23, 42, 0.78), rgba(15, 23, 42, 0.88)), url('/images/hero-bg.jpg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
         <div className="heroContent">
           <div className="heroBadge">Fresh food delivered fast</div>
           <h1>It’s not just food, it’s an experience.</h1>
@@ -187,7 +200,14 @@ function Home() {
             <div className="cards">
               {popularRestaurants.map((restaurant) => (
                 <div key={restaurant.id} className="card">
-                  <span className="cardIcon"><LuUtensilsCrossed size={32} /></span>
+                  <span className="cardIcon">
+                    <ImageWithFallback
+                      src={imageUrl(restaurant.image)}
+                      alt={restaurant.name}
+                      className="cardRestaurantImg"
+                      placeholder={<LuUtensilsCrossed size={32} />}
+                    />
+                  </span>
                   <h3>{restaurant.name}</h3>
                   <p><LuStar size={14} style={{ verticalAlign: "middle" }} /> {formatRating(restaurant.rating)}</p>
                   <p>{restaurant.location}</p>
@@ -203,7 +223,14 @@ function Home() {
             <section className="featured">
               <h2>Featured Restaurant</h2>
               <div className="featuredBox">
-                <div className="featuredImage"><LuUtensilsCrossed size={48} /></div>
+                <div className="featuredImage">
+                  <ImageWithFallback
+                    src={imageUrl(featuredRestaurant.image)}
+                    alt={featuredRestaurant.name}
+                    className="featuredRestaurantImg"
+                    placeholder={<LuUtensilsCrossed size={48} />}
+                  />
+                </div>
                 <div className="featuredInfo">
                   <h3>{featuredRestaurant.name}</h3>
                   <p>{featuredRestaurant.description}</p>

@@ -1,12 +1,18 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { LuArrowLeft, LuUtensilsCrossed, LuStar } from "react-icons/lu";
+import ImageWithFallback from "../Components/ImageWithFallback";
 import { API_URL } from "../config";
 import { formatRating } from "../utils/format";
 import "../App.css";
 
 function formatPrice(price) {
   return Number(price).toLocaleString();
+}
+
+function imageUrl(image) {
+  if (!image) return null;
+  return `/images/${encodeURIComponent(image)}`;
 }
 
 function googleMapsUrl(latitude, longitude, fallbackLocation) {
@@ -90,7 +96,14 @@ function RestaurantDetail({ addToCart }) {
           <p className="restaurantMeta">{restaurant.category} • {restaurant.location}</p>
           <p className="restaurantRating"><LuStar size={16} style={{ verticalAlign: "middle" }} /> {formatRating(restaurant.rating)}</p>
         </div>
-        <div className="restaurantEmoji"><LuUtensilsCrossed size={48} /></div>
+        <div className="restaurantEmoji">
+          <ImageWithFallback
+            src={imageUrl(restaurant.image)}
+            alt={restaurant.name}
+            className="restaurantEmojiImg"
+            placeholder={<LuUtensilsCrossed size={48} />}
+          />
+        </div>
       </section>
 
       <section className="restaurantOverview">
@@ -156,10 +169,18 @@ function RestaurantDetail({ addToCart }) {
           <div className="menuGrid">
             {restaurant.menu.map((item) => (
               <div key={item.id} className="menuItem">
-                <div>
-                  <h3>{item.name}</h3>
-                  <p>{item.description}</p>
-                  <p>Tsh {formatPrice(item.price)}</p>
+                <div className="menuItemInfo">
+                  <ImageWithFallback
+                    src={imageUrl(item.image)}
+                    alt={item.name}
+                    className="menuItemImg"
+                    placeholder={<div className="menuItemImgPlaceholder"><LuUtensilsCrossed size={24} /></div>}
+                  />
+                  <div>
+                    <h3>{item.name}</h3>
+                    <p>{item.description}</p>
+                    <p>Tsh {formatPrice(item.price)}</p>
+                  </div>
                 </div>
                 <button
                   className="heroBtn"

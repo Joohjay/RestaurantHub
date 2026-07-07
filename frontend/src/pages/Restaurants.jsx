@@ -1,9 +1,15 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { LuUtensilsCrossed, LuStar } from "react-icons/lu";
+import ImageWithFallback from "../Components/ImageWithFallback";
 import { API_URL } from "../config";
 import { formatRating } from "../utils/format";
 import "../App.css";
+
+function restaurantImageUrl(image) {
+  if (!image) return null;
+  return `/images/${encodeURIComponent(image)}`;
+}
 
 function Restaurants() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -106,7 +112,13 @@ function Restaurants() {
           {filteredRestaurants.map((restaurant) => (
             <Link key={restaurant.id} to={`/restaurant/${restaurant.id}`} className="restaurantCardLink">
               <div className="restaurantCard">
-                <div className="restaurantImage"><LuUtensilsCrossed size={40} /></div>
+                <div className="restaurantImage">
+                  <ImageWithFallback
+                    src={restaurantImageUrl(restaurant.image)}
+                    alt={restaurant.name}
+                    placeholder={<LuUtensilsCrossed size={40} />}
+                  />
+                </div>
                 <h2>{restaurant.name}</h2>
                 <p className="restaurantMeta">{restaurant.category} • {restaurant.location}</p>
                 <p className="restaurantRating"><LuStar size={14} style={{ verticalAlign: "middle" }} /> {formatRating(restaurant.rating)}</p>
